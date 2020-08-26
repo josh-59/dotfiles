@@ -15,11 +15,18 @@ fi
 
 # some more ls aliases
 alias ll='ls -alhF'
-alias la='ls -A'
+alias la='ls -a'
 
-# batcat: cat with syntax highlighting!
-# Note: falls back to ordinary cat-like behavior if it
-# detects that it connected to a non-interactiver terminal
 if which batcat > /dev/null; then
-	alias cat="batcat --paging=never"
+	alias bat="batcat --paging='never'"
 fi
+
+if which exa > /dev/null; then
+	alias exa="exa --color=auto -F"
+	alias exal="exa --color=auto -lFh"
+fi
+
+if which rustc > /dev/null; then
+	alias cr="clear && cargo run"
+fi
+

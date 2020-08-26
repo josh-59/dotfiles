@@ -115,5 +115,25 @@ fi
 export VISUAL=nvim
 export EDITOR=$VISUAL
 
+shopt -s failglob
+
 # Set Readline vi mode
 set -o vi
+
+# Cargo Watch; 
+# Rather inefficient
+function cw() {
+	clear
+	cargo build --color always 2>&1 | tee /tmp/cargo-watch 
+
+	while true; do
+		sleep 2
+		cargo build --color always > /tmp/cargo-watch2 2>&1
+		if ! diff -q /tmp/cargo-watch /tmp/cargo-watch2; then
+			clear
+			cp -f /tmp/cargo-watch2 /tmp/cargo-watch 
+			cat /tmp/cargo-watch
+		fi
+	done
+}
+		
