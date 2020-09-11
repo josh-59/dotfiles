@@ -16,6 +16,8 @@ fi
 # some more ls aliases
 alias ll='ls -alhF'
 alias la='ls -a'
+alias run="make" 
+alias fd="fdfind"
 
 if which batcat > /dev/null; then
 	alias bat="batcat --paging='never'"
