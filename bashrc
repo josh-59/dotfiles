@@ -105,6 +105,11 @@ else
     PS1='\[\033[01m\]$PWD\$ \[\033[00m\]'
 fi
 
+function jserve () {
+        jekyll serve >/dev/null 2>&1 &
+        echo 'http://127.0.0.1:4000'
+}
+
 # Environment variables
 # For building Linux From Scratch
 export LFS=/mnt/lfs
