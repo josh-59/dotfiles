@@ -1,0 +1,8 @@
+#! /bin/sh
+
+# Copies files, verbosely
+if [ "dotfiles" = $(basename $PWD) ]; then
+    cp -v ./bashrc ~/.bashrc
+    mkdir -pv ~/.config/nvim
+    cp -v ./config/nvim/init.vim ~/.config/nvim/init.vim
+fi

@@ -1,12 +1,12 @@
-# ~/.bashrc: executed by bash(1) for non-login shells.  see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
-# for examples
+#
+# ~/.bashrc
+#
 
 # If not running interactively, don't do anything
-case $- in
-    *i*) ;;
-      *) return;;
-esac
+[[ $- != *i* ]] && return
 
+
+# History 
 # don't put duplicate lines or lines starting with space in the history.
 # See bash(1) for more options
 HISTCONTROL=ignoreboth
@@ -18,6 +18,8 @@ shopt -s histappend
 HISTSIZE=1000
 HISTFILESIZE=2000
 
+
+# Bash settings
 # check the window size after each command and, if necessary,
 # update the values of LINES and COLUMNS.
 shopt -s checkwinsize
@@ -26,66 +28,64 @@ shopt -s checkwinsize
 # match all files and zero or more directories and subdirectories.
 shopt -s globstar
 
-# make less more friendly for non-text input files, see lesspipe(1)
-[ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
+# If globbing fails, replace with null string, not original pattern
+shopt -s failglob
 
-# set variable identifying the chroot you work in (used in the prompt below)
-if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
-    debian_chroot=$(cat /etc/debian_chroot)
-fi
+# Autocd
+shopt -s autocd
 
-# set a fancy prompt (non-color, unless we know we "want" color)
-case "$TERM" in
-    xterm-color|*-256color) color_prompt=yes;;
-esac
+# Set command-line editing to vi mode
+set -o vi
 
-# uncomment for a colored prompt, if the terminal has the capability; turned
-# off by default to not distract the user: the focus in a terminal window
-# should be on the output of commands, not on the prompt
-force_color_prompt=yes
 
-if [ -n "$force_color_prompt" ]; then
-    if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
-	# We have color support; assume it's compliant with Ecma-48
-	# (ISO/IEC-6429). (Lack of such support is extremely rare, and such
-	# a case would tend to support setf rather than setaf.)
-	color_prompt=yes
-    else
-	color_prompt=
+# PATH
+# If unpriviledged user, append extras to PATH:
+if [ "$(whoami)" != root ]; then
+
+    if  [[ ! $PATH =~ $HOME/.local/bin ]]; then
+	    PATH=$PATH:$HOME/.local/bin
     fi
-fi
 
-if [ "$color_prompt" = yes ]; then
-    if [ "$(whoami)" = root ]; then
-        PS1='${debian_chroot:+($debian_chroot)}\[\033[01;31m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
-    else
-        PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+    if [[ ! $PATH =~ $HOME/.cargo/bin ]]; then
+	    PATH=$PATH:$HOME/.cargo/bin
     fi
+
+    if [[ ! $PATH =~ $HOME/.gem/ruby/2.7.0/bin ]]; then
+	    PATH=$PATH:$HOME/.gem/ruby/2.7.0/bin
+    fi
+
+    # This will install Ruby Gems to ~/.gems
+    export GEM_HOME="$HOME/.gems"
+    if [[ ! $PATH =~ "$HOME/.gems/bin" ]]; then
+        PATH="$PATH:$HOME/.gems/bin"
+    fi
+
+# If root, restrict PATH
 else
-    PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
+    PATH=/bin:/usr/bin:/usr/local/bin:/usr/local/sbin
 fi
-unset color_prompt force_color_prompt
 
-# If this is an xterm set the title to user@host:dir
-case "$TERM" in
-xterm*|rxvt*)
-    PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
-    ;;
-*)
-    ;;
-esac
-
-# Add an "alert" alias for long running commands.  Use like so:
-#   sleep 10; alert
-alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
-
-# Alias definitions.
-# You may want to put all your additions into a separate file like
-# ~/.bash_aliases, instead of adding them here directly.
-# See /usr/share/doc/bash-doc/examples in the bash-doc package.
-if [ -f ~/.bash_aliases ]; then
-    . ~/.bash_aliases
+# Figure out what's where
+# Set default editor to nvim if it exists
+if which nvim > /dev/null 2>&1; then
+    export VISUAL=nvim
+    export EDITOR=$VISUAL
 fi
+
+# fd on Debian-based distro's is fdfind
+if which fdfind > /dev/null 2>&1; then
+    alias fd=fdfind
+fi
+
+# bat on Debian-based distro's is batcat
+if which batcat > /dev/null 2>&1; then
+    alias bat="batcat --paging='never'"
+elif which bat > /dev/null 2>&1; then
+    alias bat="bat --paging='never'"
+fi
+
+alias ls='ls --color=auto -F'
+alias ll='ls --color=auto -alhF'
 
 # enable programmable completion features (you don't need to enable
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
@@ -98,46 +98,16 @@ if ! shopt -oq posix; then
   fi
 fi
 
-# Conditionally append ~/.local/bin to path,
-# if it is not there already
-if  [[ ! $PATH =~ $HOME/.local/bin ]]; then
-	PATH=$PATH:$HOME/.local/bin
+# Simple prompt: Prints working directory; colorized
+if [ "$(whoami)" = root ]; then
+    PS1='\[\033[01;31m\]$PWD\$ \[\033[00m\]'
+else
+    PS1='\[\033[01m\]$PWD\$ \[\033[00m\]'
 fi
 
-# This will install Ruby Gems to ~/.gems
-export GEM_HOME="$HOME/.gems"
-if [[ ! $PATH =~ "$HOME/.gems/bin" ]]; then
-  PATH="$PATH:$HOME/.gems/bin"
-fi
+# Environment variables
+# For building Linux From Scratch
+export LFS=/mnt/lfs
 
-# Append cargo directory to path
-if [[ ! $PATH =~ $HOME/.cargo/bin ]]; then
-	PATH=$PATH:$HOME/.cargo/bin
-fi
-
-# Set default editor to nvim
-export VISUAL=nvim
-export EDITOR=$VISUAL
-
-shopt -s failglob
-
-# Set Readline vi mode
-set -o vi
-
-# Cargo Watch; 
-# Rather inefficient
-function cw() {
-	clear
-	cargo build --color always 2>&1 | tee /tmp/cargo-watch 
-
-	while true; do
-		sleep 2
-		cargo build --color always > /tmp/cargo-watch2 2>&1
-		if ! diff -q /tmp/cargo-watch /tmp/cargo-watch2; then
-			clear
-			cp -f /tmp/cargo-watch2 /tmp/cargo-watch 
-			cat /tmp/cargo-watch
-		fi
-	done
-}
-		
+# Colorized GCC warnings
+export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
