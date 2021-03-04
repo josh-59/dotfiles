@@ -2,7 +2,32 @@
 
 # Copies files, verbosely
 if [ "dotfiles" = $(basename $PWD) ]; then
-    cp -v ./bashrc ~/.bashrc
-    mkdir -pv ~/.config/nvim
-    cp -v ./config/nvim/init.vim ~/.config/nvim/init.vim
+        cp -v ./bashrc ~/.bashrc
+        mkdir -pv ~/.config/nvim
+        cp -v ./config/nvim/init.vim ~/.config/nvim/init.vim
+fi
+
+# Check existence of my favorite programs
+if ! which nvim >/dev/null 2>&1; then
+        echo Neovim not found!
+fi
+
+if ! which rg >/dev/null 2>&1; then
+        echo Ripgrep not found!
+fi
+
+if ! which fd >/dev/null 2>&1; then
+        if which fdfind >/dev/null 2>&1; then
+                echo fd found as fdfind...
+        else
+                echo fd not found!
+        fi
+fi
+
+if ! which bat >/dev/null 2>&1; then
+        if which batcat >/dev/null 2>&1; then
+                echo bat found as batcat...
+        else
+                echo bat not found!
+        fi
 fi
