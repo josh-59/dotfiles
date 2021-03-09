@@ -87,6 +87,12 @@ fi
 alias ls='ls --color=auto -F'
 alias ll='ls --color=auto -alhF'
 
+which ()
+    {
+        (alias; declare -f) | /usr/bin/which --tty-only --read-alias --read-functions --show-tilde --show-dot $@
+    }
+export -f which
+
 # enable programmable completion features (you don't need to enable
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
 # sources /etc/bash.bashrc).

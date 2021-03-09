@@ -4,9 +4,9 @@ set hidden              " Unload abandoned buffers, instead of hiding them
 set mouse=nicr
 
 " Spaces and Tabs 
-set tabstop=8		" One tab == eight spaces
-set softtabstop=8       " Number of spaces in tab when editing
-set shiftwidth=8	" One tab == eight spaces
+set tabstop=4		" One tab == eight spaces
+set softtabstop=4       " Number of spaces in tab when editing
+set shiftwidth=4	" One tab == eight spaces
 set expandtab		" Use spaces instead of tabs
 set smarttab		" Be smart about using tabs
 set autoindent
