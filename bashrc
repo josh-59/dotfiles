@@ -50,8 +50,8 @@ if [ "$(whoami)" != root ]; then
 	    PATH=$PATH:$HOME/.cargo/bin
     fi
 
-    if [[ ! $PATH =~ $HOME/.gem/ruby/2.7.0/bin ]]; then
-	    PATH=$PATH:$HOME/.gem/ruby/2.7.0/bin
+    if [[ ! $PATH =~ $HOME/.gem/ruby/3.0.0/bin ]]; then
+	    PATH=$PATH:$HOME/.gem/ruby/3.0.0/bin
     fi
 
     # This will install Ruby Gems to ~/.gems
